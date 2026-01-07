@@ -20,7 +20,7 @@ public class ${table.controllerName} {
     private I${service} ${'${service}' ? substring(0) ? uncap_first};
 
     @PostMapping("/page")
-    public ResponseVo<List<${entity}>> page(RequestVo<${entity}> requestVo) {
+    public ResponseVo<List<${entity}>> page(@RequestBody RequestVo<${entity}> requestVo) {
         return ResponseVo.success(${'${service}' ? substring(0) ? uncap_first}.pageList(requestVo));
     }
 

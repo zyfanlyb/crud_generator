@@ -1,8 +1,11 @@
 package com.zyfan.generator;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import com.baomidou.mybatisplus.generator.fill.Column;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -10,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.nio.file.Paths;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -22,10 +26,11 @@ public class CodeGenerator {
                 .bannerMode(Banner.Mode.OFF)
                 .run(args);
         Environment environment = context.getEnvironment();
+        String modulePath = environment.getProperty("module_path");
         String jdbcUrl = environment.getProperty("spring.datasource.dynamic.datasource.master.url");
         String jdbcUsername = environment.getProperty("spring.datasource.dynamic.datasource.master.username");
         String jdbcPassword = environment.getProperty("spring.datasource.dynamic.datasource.master.password");
-        String packageName = "com.zyfan.generator";
+        String packageName = "com.zyfan";
         System.out.println("输入包名:");
         Scanner scanner = new Scanner(System.in);
         String subPackageName = scanner.nextLine();
@@ -34,8 +39,9 @@ public class CodeGenerator {
         for (String tableName : tableNames.replaceAll(" ", "").split(",")) {
             FastAutoGenerator.create(jdbcUrl, jdbcUsername, jdbcPassword)
                     .globalConfig(builder -> builder
-                            .outputDir(Paths.get(System.getProperty("user.dir")) + "/src/main/java")
-                            .disableOpenDir()
+//                            .outputDir(Paths.get(System.getProperty("user.dir")) + "/src/main/java")
+                                    .outputDir(modulePath + "/src/main/java")
+                                    .disableOpenDir()
                     )
                     .packageConfig(builder -> builder
                             .parent(packageName + "." + subPackageName)
@@ -45,9 +51,25 @@ public class CodeGenerator {
                             .serviceImpl("service.impl")
                             .xml("mapper.xml")
                     )
+                    .dataSourceConfig(builder ->
+                            builder.typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
+                                int typeCode = metaInfo.getJdbcType().TYPE_CODE;
+                                if (typeCode == Types.TIMESTAMP) {
+                                    return DbColumnType.DATE;
+                                } else if (typeCode == Types.TINYINT) {
+                                    return DbColumnType.BOOLEAN;
+                                }
+                                return typeRegistry.getColumnType(metaInfo);
+                            })
+                    )
                     .strategyConfig(builder -> builder
                             .addInclude(tableName)
-                            .entityBuilder().javaTemplate("template/entity.java").build()
+                            .entityBuilder()
+                                .javaTemplate("template/entity.java")
+                                .enableLombok()
+                                .addTableFills(new Column("create_time", FieldFill.INSERT))
+                                .addTableFills(new Column("update_time", FieldFill.INSERT_UPDATE))
+                                .build()
                             .mapperBuilder().mapperTemplate("template/mapper.java").mapperXmlTemplate("template/mapper.xml").build()
                             .serviceBuilder().serviceTemplate("template/service.java").serviceImplTemplate("template/serviceImpl.java").build()
                             .controllerBuilder().template("template/controller.java").build()

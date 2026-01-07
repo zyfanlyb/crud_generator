@@ -2,6 +2,8 @@ package ${package}.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * ${table.comment!}
@@ -30,6 +32,9 @@ public class ${entity} {
     </#if>
 <#-- 普通字段 -->
 </#if>
+    <#if field.propertyType == "Date">
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    </#if>
     @TableField("${field.annotationColumnName}")
 <#-- 逻辑删除注解 -->
 <#if (logicDeleteFieldName!"") == field.name>
