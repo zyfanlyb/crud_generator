@@ -25,8 +25,13 @@ public class ${service}Impl extends ServiceImpl<${mapper},${entity}> implements 
     }
 
     @Override
-    public void insertOrUpdate(RequestVo<${entity}> requestVo) {
-        ${'${mapper}' ? uncap_first}.insertOrUpdate(requestVo.getData());
+    public void insert(RequestVo<${entity}> requestVo) {
+        ${'${mapper}' ? uncap_first}.insert(requestVo.getData());
+    }
+
+    @Override
+    public void update(RequestVo<${entity}> requestVo) {
+        ${'${mapper}' ? uncap_first}.updateById(requestVo.getData());
     }
 
     @Override

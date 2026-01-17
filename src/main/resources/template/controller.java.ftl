@@ -24,9 +24,15 @@ public class ${table.controllerName} {
         return ResponseVo.success(${'${service}' ? substring(0) ? uncap_first}.pageList(requestVo));
     }
 
-    @PostMapping("/insertOrUpdate")
+    @PostMapping("/insert")
     public ResponseVo insert(@RequestBody RequestVo<${entity}> requestVo) {
-        ${'${service}' ? substring(0) ? uncap_first}.insertOrUpdate(requestVo);
+        ${'${service}' ? substring(0) ? uncap_first}.insert(requestVo);
+        return ResponseVo.success();
+    }
+
+    @PostMapping("/update")
+    public ResponseVo update(@RequestBody RequestVo<${entity}> requestVo) {
+        ${'${service}' ? substring(0) ? uncap_first}.update(requestVo);
         return ResponseVo.success();
     }
 

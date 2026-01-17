@@ -9,7 +9,9 @@ public interface I${service} extends IService<${entity}> {
 
     IPage<${entity}> pageList(RequestVo<${entity}> requestVo);
 
-    void insertOrUpdate(RequestVo<${entity}> requestVo);
+    void insert(RequestVo<${entity}> requestVo);
+
+    void update(RequestVo<${entity}> requestVo);
 
     ${entity} info(Long id);
 
