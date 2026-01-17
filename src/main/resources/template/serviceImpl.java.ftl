@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyfan.pojo.web.RequestVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ${service}Impl extends ServiceImpl<${mapper},${entity}> implements I${service} {
@@ -24,11 +25,13 @@ public class ${service}Impl extends ServiceImpl<${mapper},${entity}> implements 
         );
     }
 
+    @Transactional
     @Override
     public void insert(RequestVo<${entity}> requestVo) {
         ${'${mapper}' ? uncap_first}.insert(requestVo.getData());
     }
 
+    @Transactional
     @Override
     public void update(RequestVo<${entity}> requestVo) {
         ${'${mapper}' ? uncap_first}.updateById(requestVo.getData());
